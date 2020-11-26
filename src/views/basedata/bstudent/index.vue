@@ -294,7 +294,7 @@
            </el-form-item> -->
 
            <el-form-item label="宿舍号" prop="bdormitoryId" >
-              <el-select v-model="form.bdormitoryId"  placeholder="请选择"    >
+              <el-select v-model="form.bdormitoryId"  value-key="id"  placeholder="请选择"  >
                 <el-option
                         v-for="item in bdormitoryOptions"
                         :key="item.id"
@@ -406,8 +406,7 @@ export default {
 
       fileList: [],
       photo:'',
-
-
+		disabledInput:false,
       // 状态数据字典
       statusOptions: [],
       // 查询参数
@@ -490,7 +489,7 @@ export default {
     this.getDicts("sys_user_sex").then(response => {
       this.sexOptions = response.data;
     });
-		this.form.bdormitoryId = this.bdormitoryOptions[0].id ;
+	  //this.form.bdormitoryId = this.bdormitoryOptions[0].id ;
   },
   methods: {
 		//文件状态改变
@@ -510,19 +509,19 @@ export default {
      change1(){
       this.bdormitoryOptions=[];
       //this.form.bdormitoryId='';
-
 			 // 获取栋号
 			let buildingNo_dictValue=this.buildingNoOptions.find(val=>val.dictValue==this.form.buildingNo).dictValue
-
 			// 获取楼层号
 			let storey_dictValue=this.storeyOptions.find(val=>val.dictValue==this.form.storey).dictValue
 			if(storey_dictValue==undefined){
+				alert("楼层号为空")
 				return ;
 			}
 
 			getBDormitoryListByCol(buildingNo_dictValue,storey_dictValue).then(response => {
 			     this.bdormitoryOptions = response.data;
-
+				console.log(this.bdormitoryOptions);
+				alert(this.bdormitoryOptions)
 			   }
 			 );
 
@@ -531,10 +530,10 @@ export default {
       this.bdormitoryOptions=[];
 
 			 // 获取栋号
-			let buildingNo_dictValue=this.buildingNoOptions.find(val=>val.dictValue==this.form.buildingNo).dictValue
+			let buildingNo_dictValue=this.buildingNoOptions.find(val=>val.dictValue==this.form.buildingNo).dictValue;
 
 			// 获取楼层号
-			let storey_dictValue=this.storeyOptions.find(val=>val.dictValue==this.form.storey).dictValue
+			let storey_dictValue=this.storeyOptions.find(val=>val.dictValue==this.form.storey).dictValue;
 			if(buildingNo_dictValue==undefined){
 				return ;
 			}
@@ -573,6 +572,7 @@ export default {
           }
         }
        	this.getList();
+				this.dialogImageUrl='';
       },
     //删除文件之前的钩子函数
     handleRemove(file, fileList) {
@@ -723,12 +723,17 @@ export default {
         this.title = "修改学员信息";
         //学号新增之后不可修改
         this.disabledInput=true;
-				//显示被修改的图片信息
-          this.dialogVisible = true;
-          this.dialogImageUrl = 'http://localhost:9003/basedata/bstudent/getPhoto.do?id=' + this.form.id + '&width=200&height=200';
-
-					this.activeUrl = 'http://localhost:9003/basedata/bstudent/updateAndUpload';
-
+		//显示被修改的图片信息
+        this.dialogVisible = true;
+        this.dialogImageUrl = 'http://localhost:9003/basedata/bstudent/getPhoto.do?id=' + this.form.id + '&width=200&height=200';
+		    this.activeUrl = 'http://localhost:9003/basedata/bstudent/updateAndUpload';
+		      getBDormitoryListByCol(this.form.buildingNo,this.form.storey).then(response => {
+		     this.bdormitoryOptions = response.data;
+            this.bdormitoryOptions.forEach(a=>{
+              a.id = a.id.toString();
+            })
+		   }
+		 )
       });
 
     },
