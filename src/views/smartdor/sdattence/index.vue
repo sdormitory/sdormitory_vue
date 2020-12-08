@@ -33,7 +33,7 @@
     <el-table v-loading="loading" :data="sdattenceList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="40" align="center" />
       <el-table-column label="序号" align="center" prop="id" />
-      <el-table-column label="考勤类型" align="center" prop="deviceNo" :show-overflow-tooltip="true" />
+      <el-table-column label="考勤类型" align="center" prop="deviceNo" :show-overflow-tooltip="true" :formatter="devicestatusFormat" />
       <el-table-column label="学号" align="center" prop="studentNo"  />
       <el-table-column label="学生姓名" align="center" prop="studentName"  /> >
       <el-table-column label="出入时间" align="center" prop="accessDate"  width="160" />
@@ -100,6 +100,8 @@
         //考勤处理状态
         absenceProcessStatus:[],
 
+        deviceOptions:[],
+
         // 查询参数
         queryParams: {
           pageNum: 1,
@@ -116,8 +118,14 @@
       this.getDicts("attence_status").then(response => {
         this.attenceStatusOptions = response.data;
       });
+
       this.getDicts("absence_process_status").then(response => {
         this.absenceProcessStatus = response.data;
+      });
+
+      this.getDicts("device_access_type").then(response => {
+        console.log(response.data);
+        this.deviceOptions = response.data;
       });
     },
     methods: {
@@ -128,6 +136,10 @@
       //回填考勤状态处理
       absenceProcessStatusFormat(row, column) {
         return this.selectDictLabel(this.absenceProcessStatus, row.absenceProcessStatus);
+      },
+      //回填考勤类型
+      devicestatusFormat(row, column) {
+        return this.selectDictLabel(this.deviceOptions, 2);
       },
       /** 查询考勤记录列表 */
       getList() {
