@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <div class="dashboard-editor-container">
 
     <panel-group @handleSetLineChartData="handleSetLineChartData" />
@@ -25,7 +25,7 @@
       </el-col>
     </el-row>
 
-    
+
   </div>
 </template>
 
@@ -96,3 +96,40 @@ export default {
   }
 }
 </style>
+ -->
+
+ <template>
+   <div class="dashboard-editor-container">
+     <StudentStateCount></StudentStateCount>
+   </div>
+ </template>
+
+ <script>
+
+ import StudentStateCount from "./dashboard/StudentStateCount";
+
+
+ export default {
+   name: "Index",
+   components: {
+     StudentStateCount,
+   },
+   data() {
+     return {};
+   },
+ };
+ </script>
+
+ <style lang="scss" scoped>
+ .dashboard-editor-container {
+   padding: 32px;
+   background-color:white;
+   position: relative;
+
+   .chart-wrapper {
+     background: #fff;
+     padding: 16px 16px 0;
+     margin-bottom: 32px;
+   }
+ }
+ </style>
