@@ -45,9 +45,10 @@ Vue.prototype.msgInfo = function (msg) {
 }
 
 // 全局组件挂载
+// Vue.use(echarts)
 Vue.component('Pagination', Pagination)
-
 Vue.use(permission)
+
 
 /**
  * If you don't want to use mock-server
