@@ -17,6 +17,14 @@ export function getBStudent(bstudentId) {
   })
 }
 
+//根据学号查询学员详细
+export function getBStudentByNo(bstudentNo) {
+  return request({
+    url: '/basedata/bstudent/getStuByNo/'+bstudentNo,
+    method: 'get'
+  })
+}
+
 // 新增学员信息
 export function addBStudent(data) {
    that.$refs.uploadxls.submit() // 提交时触发了before-upload函数

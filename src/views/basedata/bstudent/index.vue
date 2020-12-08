@@ -514,14 +514,12 @@ export default {
 			// 获取楼层号
 			let storey_dictValue=this.storeyOptions.find(val=>val.dictValue==this.form.storey).dictValue
 			if(storey_dictValue==undefined){
-				alert("楼层号为空")
 				return ;
 			}
 
 			getBDormitoryListByCol(buildingNo_dictValue,storey_dictValue).then(response => {
 			     this.bdormitoryOptions = response.data;
 				console.log(this.bdormitoryOptions);
-				alert(this.bdormitoryOptions)
 			   }
 			 );
 
