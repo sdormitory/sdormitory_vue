@@ -325,8 +325,7 @@
 
 <script>
 import { listSdDevice, getSdDevice, addSdDevice, updateSdDevice, getSdDeviceInfo ,changeSdDeviceStatus} from "@/api/smartdor/sddevice";
-//import { listAllHygieneDeduct } from "@/api/sysset/hygienededuct";
-//import { getBDormitoryListByCol } from "@/api/basedata/bdormitory";
+
 
 export default {
   name: "SdDevice",
