@@ -5,29 +5,37 @@
     <!-- 内容主体区域 -->
     <el-form
       :inline="true"
-      :model="formInline"
+      :model="queryParams"
       class="demo-form-inline"
       style="text-align: center"
       label-width="85px"
     >
     <el-row :gutter="10" class="mb8">
     <el-form-item label="宿舍栋号">
-      <el-select v-model="formInline.region" placeholder="请选择栋号" style="width: 180px">
-        <el-option label="1栋" value="shanghai"></el-option>
-        <el-option label="2栋" value="beijing"></el-option>
+      <el-select v-model="queryParams.building" placeholder="请选择栋号" style="width: 180px">
+        <el-option
+          v-for="dict in buildingNoOptions"
+          :key="dict.dictValue"
+          :label="dict.dictLabel"
+          :value="dict.dictValue"
+        />
       </el-select>
     </el-form-item>
 
     <el-form-item label="楼层">
-      <el-select v-model="formInline.region" placeholder="请选择楼层" style="width: 180px">
-        <el-option label="一层" value="shanghai"></el-option>
-        <el-option label="二层" value="beijing"></el-option>
+      <el-select v-model="queryParams.storey" placeholder="请选择楼层" style="width: 180px">
+        <el-option
+          v-for="dict in storeyOptions"
+          :key="dict.dictValue"
+          :label="dict.dictLabel"
+          :value="dict.dictValue"
+        />
       </el-select>
     </el-form-item>
 
       <el-form-item label="宿舍号">
         <el-input
-          v-model="formInline.user"
+          v-model="queryParams.bdormitory"
           placeholder="请输入宿舍号" style="width: 180px"
         ></el-input>
       </el-form-item>
@@ -36,18 +44,19 @@
     <el-row :gutter="10" class="mb8">
       <el-form-item label="请选择日期">
         <el-date-picker
-          v-model="value2"
-          type="datetime"
+          v-model="queryParams.checkDate"
+          type="date"
           placeholder="选择日期时间"
           align="right"
           :picker-options="pickerOptions"
           style="width: 180px"
+          value-format="yyyy-MM-dd"
         >
         </el-date-picker>
       </el-form-item>
 
       <el-form-item>
-        <el-button type="primary">查询</el-button>
+        <el-button type="primary" @click="queryList">查询</el-button>
       </el-form-item>
 
        </el-row>
@@ -56,21 +65,21 @@
     <el-collapse accordion style="margin-bottom: 15px;" @change="show = !show">
       <el-collapse-item>
         <template slot="title">
-          <el-divider><el-tag class="text">缺勤学生详情，请点击展开</el-tag></el-divider>
+          <el-divider><el-tag class="text" @click="queryAbsenceStudent">缺勤学生详情，请点击展开</el-tag></el-divider>
         </template>
         <div>
           <el-card
             class="box-card flow title-font"
             style="width: 226px"
-            v-for="(room, index) in roomData"
+            v-for="(stu, index) in listAbsenceStudent"
             :key="index"
           >
             <div slot="header" class="clearfix">
-              <span>姓名：张三</span>
+              <span>姓名：{{stu.studentName}}</span>
             </div>
 
             <el-alert type="info" :closable="false" >
-              地址：1栋1楼001宿舍
+              地址：{{stu.dorAddress}}
             </el-alert>
           </el-card>
         </div>
@@ -105,7 +114,7 @@
       </span>
 
       <span class="text item" style="margin: 0 15px">
-        <el-badge :value="room.leave" :v-if="room.leave" class="item" type="primary">
+        <el-badge :value="room.leaveCount" :v-if="room.leave" class="item" type="primary">
           <el-button size="small" > 请假</el-button>
         </el-badge>
       </span>
@@ -135,36 +144,25 @@
 // 例如：import 《组件名称》 from '《组件路径》';
 
 import { AIOpen} from "@/api/smartdor/aidevice";
-
+import {getListAbsenceStudent,getListAbsenceDormitory} from "@/api/smartdor/sdattence"
 export default {
   // import引入的组件需要注入到对象中才能使用
   components: {},
   data() {
     // 这里存放数据
     return {
+      buildingNoOptions:[],
+      storeyOptions:[],
+      // 查询参数
+      queryParams: {
+        checkDate:'',
+        building:'',
+        storey:'',
+        bdormitory:''
+      },
       show: true,
-      tableData: [
-        {
-          date: "2016-05-02",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄",
-        },
-        {
-          date: "2016-05-04",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1517 弄",
-        },
-        {
-          date: "2016-05-01",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1519 弄",
-        },
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1516 弄",
-        },
-      ],
+      //缺勤列表
+      listAbsenceStudent:[],
       formInline: {
         user: "",
         region: "",
@@ -197,128 +195,7 @@ export default {
       },
 
       value2: "",
-      roomData: [
-        {
-          roomName: "1栋3楼001",
-          normal: 4,
-          leave: 3,
-          comebacklate: 2,
-          absence: 1,
-          total: 10,
-        },
-        {
-          roomName: "1栋4楼001",
-          normal: 4,
-          leave: 3,
-          comebacklate: 2,
-          absence: 1,
-          total: 10,
-        },
-        {
-          roomName: "2栋1楼001",
-          normal: 4,
-          leave: 3,
-          comebacklate: 2,
-          absence: 1,
-          total: 10,
-        },
-        {
-          roomName: "2栋1楼002",
-          normal: 4,
-          leave: 3,
-          comebacklate: 2,
-          absence: 1,
-          total: 10,
-        },
-        {
-          roomName: "2栋1楼003",
-          normal: 4,
-          leave: 3,
-          comebacklate: 2,
-          absence: 1,
-          total: 10,
-        },
-        {
-          roomName: "2栋1楼004",
-          normal: 4,
-          leave: 3,
-          comebacklate: 2,
-          absence: 1,
-          total: 10,
-        },
-        {
-          roomName: "1栋4楼002",
-          normal: 4,
-          leave: 3,
-          comebacklate: 2,
-          absence: 1,
-          total: 10,
-        },
-        {
-          roomName: "1栋4楼003",
-          normal: 4,
-          leave: 3,
-          comebacklate: 2,
-          absence: 1,
-          total: 10,
-        },
-        {
-          roomName: "1栋4楼005",
-          normal: 4,
-          leave: 3,
-          comebacklate: 2,
-          absence: 1,
-          total: 10,
-        },
-        {
-          roomName: "1栋4楼006",
-          normal: 4,
-          leave: 3,
-          comebacklate: 2,
-          absence: 1,
-          total: 10,
-        },
-        {
-          roomName: "1栋4楼007",
-          normal: 4,
-          leave: 3,
-          comebacklate: 2,
-          absence: 1,
-          total: 10,
-        },
-        {
-          roomName: "1栋5楼001",
-          normal: 4,
-          leave: 3,
-          comebacklate: 2,
-          absence: 1,
-          total: 10,
-        },
-        {
-          roomName: "1栋5楼002",
-          normal: 4,
-          leave: 3,
-          comebacklate: 2,
-          absence: 1,
-          total: 10,
-        },
-        {
-          roomName: "1栋5楼003",
-          normal: 4,
-          leave: 3,
-          comebacklate: 2,
-          absence: 1,
-          total: 10,
-        },
-        {
-          roomName: "1栋5楼004",
-          normal: 4,
-          leave: 3,
-          comebacklate: 2,
-          absence: 1,
-          total: 10,
-        },
-      ],
+      roomData: [],
     };
   },
   // 监听属性 类似于data概念
@@ -327,6 +204,23 @@ export default {
   watch: {},
   // 方法集合
   methods: {
+    queryList(){
+      this.getListAbsenceStudent();
+      this.getListAbsenceDormitory();
+    },
+    queryAbsenceStudent(){
+      this.getListAbsenceStudent();
+    },
+    getListAbsenceStudent(){
+      getListAbsenceStudent(this.queryParams).then(response => {
+        this.listAbsenceStudent = response.data.list;
+      })
+    },
+    getListAbsenceDormitory(){
+      getListAbsenceDormitory(this.queryParams).then(response => {
+        this.roomData = response.data.list;
+      })
+    },
     //   change(){
     //       alert(1)
     //       this.show = false;
@@ -347,7 +241,15 @@ export default {
     },
   },
   // 生命周期 - 创建完成（可以访问当前this实例）
-  created() {},
+  created() {
+    this.getDicts("sys_storey").then(response => {
+      this.storeyOptions = response.data;
+    });
+    this.getDicts("sys_building").then(response => {
+      this.buildingNoOptions = response.data;
+    });
+    this.getListAbsenceDormitory();
+  },
   // 生命周期 - 挂载完成（可以访问DOM元素）
   mounted() {},
   beforeCreate() {}, // 生命周期 - 创建之前
