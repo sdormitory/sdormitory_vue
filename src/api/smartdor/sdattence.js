@@ -19,4 +19,22 @@ export function delSdattence(id) {
   })
 }
 
+// 查询缺勤学生信息列表
+export function getListAbsenceStudent(query) {
+  return request({
+    url: '/smartdor/sdAttence/listAbsenceStudent',
+    method: 'get',
+    params: query
+  })
+}
+
+// 查询宿舍考勤信息列表
+export function getListAbsenceDormitory(query) {
+  return request({
+    url: '/smartdor/sdAttence/listAbsenceDormitory',
+    method: 'get',
+    params: query
+  })
+}
+
 

@@ -545,12 +545,17 @@ export default {
     /** 获取设备详细信息操作 **/
     handleSelectionDevice(){
 
-      getSdDeviceInfo().then(response => {
-
-        this.msgSuccess(response.data.msg);
-        this.form = response.data.data;
-        this.doorTypeFormat();
-      });
+      if(this.form.deviceIpAddress != undefined) {
+        let IP = this.form.deviceIpAddress;
+        getSdDeviceInfo().then(response => {
+          this.msgSuccess(response.data.msg);
+          this.form = response.data.data;
+          this.form.deviceIpAddress = IP;
+          this.doorTypeFormat();
+        });
+      } else {
+        this.msgError("设备IP不能为空！")
+      }
 
     },
     // 设备状态修改
