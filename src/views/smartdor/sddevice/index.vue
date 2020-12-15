@@ -157,6 +157,21 @@
             </el-col>
           </el-row>
 
+        <el-row :gutter="10" class="mb8" v-if="isButton" >
+          <el-col :span="1.5">
+            <el-form-item label="考勤规则" prop="attenceRuleType" >
+              <el-select v-model="form.attenceRuleType" :disabled="false"  placeholder="请选择" clearable >
+                <el-option
+                  v-for="dict in attenceRuleTypeOptions"
+                  :key="dict.id"
+                  :label="dict.attenceRuleName"
+                  :value="dict.id"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
           <el-row :gutter="10" class="mb8" >
             <el-col :span="1.5">
               <el-form-item label="活体判断" prop="cameraDetectType" >
@@ -324,7 +339,7 @@
 </template>
 
 <script>
-import { listSdDevice, getSdDevice, addSdDevice, updateSdDevice, getSdDeviceInfo ,changeSdDeviceStatus} from "@/api/smartdor/sddevice";
+import { listSdDevice, getSdDevice, addSdDevice, updateSdDevice, getSdDeviceInfo ,changeSdDeviceStatus ,getAttenceRuleList} from "@/api/smartdor/sddevice";
 
 
 export default {
@@ -361,6 +376,8 @@ export default {
       recognitionSwitchOptions:[],
       // 识别成功后是否开门
       pairSuccessOpenDoorOptions:[],
+      // 考勤规则
+      attenceRuleTypeOptions:[],
       // 查询参数
       queryParams: {
         pageNum: 1,
@@ -393,8 +410,8 @@ export default {
     };
   },
   created() {
-
     this.getList();
+    this.getAttenceRule();
     this.getDicts("device_access_type").then(response => {
       this.deviceAccessTypeOptions = response.data;
     });
@@ -571,6 +588,12 @@ export default {
         this.msgSuccess(text + "成功");
       }).catch(function() {
         row.status = row.status === "0" ? "1" : "0";
+      });
+    },
+    // 获取考勤规则列表
+    getAttenceRule(){
+      getAttenceRuleList().then(response => {
+        this.attenceRuleTypeOptions = response.data;
       });
     },
 
