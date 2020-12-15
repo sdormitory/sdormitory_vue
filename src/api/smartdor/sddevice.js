@@ -55,4 +55,12 @@ export function changeSdDeviceStatus(sdDeviceId, status) {
   })
 }
 
+// 查询设备规则类型
+export function getAttenceRuleList() {
+  return request({
+    url: '/smartdor/sddevice/getAttenceRuleList',
+    method: 'get',
+  })
+}
+
 
