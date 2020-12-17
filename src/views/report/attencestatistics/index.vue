@@ -47,7 +47,7 @@
 
 
 <script>
-  import bargraph from '../../dashboard/attendanceChart'
+  import bargraph from '../../dashboard/AttendanceChart'
   import { listAttenceStatistics} from "@/api/report/attencestatistics";
 
   export default {

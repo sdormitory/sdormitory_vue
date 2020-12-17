@@ -222,7 +222,8 @@
        </el-col>
       </el-row>
       </div>
-      <div id="between_time" v-show="flag">
+        <!-- id出现重复暂时加了个1 -->
+      <div id="between_time1" v-show="flag">
       <el-row :gutter="10" class="mb8">
        <el-col :span="24" >
          <el-form-item label="放假开始时间">

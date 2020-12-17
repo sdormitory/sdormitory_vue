@@ -9,6 +9,15 @@ export function listSdLeave(query) {
   })
 }
 
+// 下载用户导入模板
+export function importTemplate() {
+  return request({
+    url: '/smartdor/sdleave/importTemplate',
+    responseType:'blob',
+    method: 'get'
+  })
+}
+
 // 查询请假详细
 export function getSdLeave(sdleaveId) {
   return request({

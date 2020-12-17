@@ -1,6 +1,7 @@
 <template>
   <div class="app-container">
     <el-form :inline="true">
+      <el-form-item>
         <el-button
           class="filter-item"
           type="primary"
